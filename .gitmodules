@@ -1,0 +1,6 @@
+[submodule "andys.frontend"]
+	path = andys.frontend
+	url = git@github.com:aistomin/andys.frontend.git
+[submodule "andys.backend"]
+	path = andys.backend
+	url = git@github.com:aistomin/andys.backend.git
