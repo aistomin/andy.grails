@@ -4,3 +4,6 @@
 [submodule "andys.backend"]
 	path = andys.backend
 	url = git@github.com:aistomin/andys.backend.git
+[submodule "andy.grails.backend"]
+	path = andy.grails.backend
+	url = git@github.com:aistomin/andy.grails.backend.git
