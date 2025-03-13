@@ -1,0 +1,23 @@
+name: Update Backend Rev
+
+on:
+  repository_dispatch:
+    types: [update_backend_rev]  # Listen for the custom event from the child repo
+
+jobs:
+  update_submodule:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout parent repo
+      uses: actions/checkout@v4
+    - name: Checkout submodule
+      run: |
+        git submodule update --init --recursive  # Initialize and update submodule
+        git submodule update --remote  # Make sure submodule is up-to-date
+    - name: Commit updated submodule reference
+      run: |
+        git add .  # Stage changes
+        git commit -m "Update submodule reference for andy.grails.backend"
+        git push origin master  # Push the updated reference back to the parent repo
+    - name: Print success message
+      run: echo "Submodule updated and pushed successfully!"
