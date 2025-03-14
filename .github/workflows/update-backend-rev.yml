@@ -3,6 +3,9 @@ name: Update Backend Rev
 on:
   repository_dispatch:
     types: [update_backend_rev]  # Triggered from the child repo
+    
+permissions:
+  contents: write  # Allow write access to contents, which includes pushing changes
 
 jobs:
   update_submodule:
