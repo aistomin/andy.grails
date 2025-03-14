@@ -12,16 +12,25 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: true  # Ensure submodules are checked out
-    - name: Update only the andy.grails.backend submodule
+
+    - name: Ensure submodule uses HTTPS instead of SSH
+      run: |
+        git config --global url."https://github.com/".insteadOf "git@github.com:"
+        git submodule sync
+        git submodule update --init --recursive
+
+    - name: Update andy.grails.backend submodule
       run: |
         cd andy.grails.backend  # Move into the submodule directory
         git fetch origin master  # Fetch the latest changes
         git checkout origin/master  # Update the submodule to the latest master commit
         cd ..  # Move back to the parent repo
+
     - name: Commit updated submodule reference
       run: |
         git add andy.grails.backend  # Only add this submodule
         git commit -m "Update submodule reference for andy.grails.backend"
         git push origin master  # Push the updated reference back to the parent repo
+
     - name: Print success message
       run: echo "Submodule andy.grails.backend updated successfully!"
