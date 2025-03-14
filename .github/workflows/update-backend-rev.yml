@@ -39,7 +39,12 @@ jobs:
       run: |
         git add andy.grails.backend  # Stage the submodule update
         git commit -m "Update submodule reference for andy.grails.backend"
-        git push origin master  # Push the updated reference
+        
+    - name: Push changes using GitHub Token
+      run: |
+        git push https://github.com/${{ github.repository }}.git HEAD:master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use the default GitHub token for authentication
 
     - name: Print success message
       run: echo "Submodule andy.grails.backend updated successfully!"
