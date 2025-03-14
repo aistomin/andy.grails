@@ -22,6 +22,11 @@ jobs:
         cat .gitmodules  # Print updated .gitmodules for debugging
         git submodule sync
         git submodule update --init --recursive  # Now fetch submodules using HTTPS
+        
+    - name: Set Git identity
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"    
 
     - name: Update only the andy.grails.backend submodule
       run: |
