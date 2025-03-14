@@ -34,8 +34,8 @@ jobs:
     - name: Update only the andy.grails.backend submodule
       run: |
         cd andy.grails.backend  # Move into the submodule directory
-        git fetch origin master  # Fetch the latest changes
-        git checkout origin/master  # Update the submodule to the latest master commit
+        git fetch origin  # Fetch all changes
+        git checkout ${{ github.event.client_payload.brev }}  # Checkout the specific commit from the child repo
         cd ..  # Move back to parent repo
 
     - name: Commit updated submodule reference
