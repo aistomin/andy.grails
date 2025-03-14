@@ -2,35 +2,39 @@ name: Update Backend Rev
 
 on:
   repository_dispatch:
-    types: [update_backend_rev]  # Listen for the custom event from the child repo
+    types: [update_backend_rev]  # Triggered from the child repo
 
 jobs:
   update_submodule:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout parent repo
+    - name: Checkout parent repo without submodules
       uses: actions/checkout@v4
       with:
-        submodules: true  # Ensure submodules are checked out
+        submodules: false  # Do NOT initialize submodules yet
 
-    - name: Ensure submodule uses HTTPS instead of SSH
+    - name: Override SSH URLs with HTTPS for submodules
       run: |
-        git config --global url."https://github.com/".insteadOf "git@github.com:"
+        git config --file .gitmodules --get-regexp url | while read key url; do
+          new_url=$(echo $url | sed 's/git@github.com:/https:\/\/github.com\//')
+          git config --file .gitmodules $key $new_url
+        done
+        cat .gitmodules  # Print updated .gitmodules for debugging
         git submodule sync
-        git submodule update --init --recursive
+        git submodule update --init --recursive  # Now fetch submodules using HTTPS
 
-    - name: Update andy.grails.backend submodule
+    - name: Update only the andy.grails.backend submodule
       run: |
         cd andy.grails.backend  # Move into the submodule directory
         git fetch origin master  # Fetch the latest changes
         git checkout origin/master  # Update the submodule to the latest master commit
-        cd ..  # Move back to the parent repo
+        cd ..  # Move back to parent repo
 
     - name: Commit updated submodule reference
       run: |
-        git add andy.grails.backend  # Only add this submodule
+        git add andy.grails.backend  # Stage the submodule update
         git commit -m "Update submodule reference for andy.grails.backend"
-        git push origin master  # Push the updated reference back to the parent repo
+        git push origin master  # Push the updated reference
 
     - name: Print success message
       run: echo "Submodule andy.grails.backend updated successfully!"
