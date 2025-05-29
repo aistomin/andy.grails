@@ -2,52 +2,61 @@ name: Update Backend Rev
 
 on:
   repository_dispatch:
-    types: [update_backend_rev]  # Triggered from the child repo
-    
+    types:
+      - update_backend_rev
+      - update_frontend_rev
+
 permissions:
-  contents: write  # Allow write access to contents, which includes pushing changes
+  contents: write  # Allow "write" access to contents, which includes pushing changes.
 
 jobs:
   update_submodule:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout parent repo without submodules
-      uses: actions/checkout@v4
-      with:
-        submodules: false  # Do NOT initialize submodules yet
+      - name: Checkout parent repo without submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: false  # Do NOT initialize submodules yet.
 
-    - name: Override SSH URLs with HTTPS for submodules
-      run: |
-        git config --file .gitmodules --get-regexp url | while read key url; do
-          new_url=$(echo $url | sed 's/git@github.com:/https:\/\/github.com\//')
-          git config --file .gitmodules $key $new_url
-        done
-        cat .gitmodules  # Print updated .gitmodules for debugging
-        git submodule sync
-        git submodule update --init --recursive  # Now fetch submodules using HTTPS
-        
-    - name: Set Git identity
-      run: |
-        git config user.name "GitHub Actions"
-        git config user.email "actions@github.com"    
+      - name: Override SSH URLs with HTTPS for submodules
+        run: |
+          git config --file .gitmodules --get-regexp url | while read key url; do
+            new_url=$(echo $url | sed 's/git@github.com:/https:\/\/github.com\//')
+            git config --file .gitmodules $key $new_url
+          done
+          cat .gitmodules  # Print updated .gitmodules for debugging
+          git submodule sync
+          git submodule update --init --recursive  # Now fetch submodules using HTTPS
 
-    - name: Update only the andy.grails.backend submodule
-      run: |
-        cd andy.grails.backend  # Move into the submodule directory
-        git fetch origin  # Fetch all changes
-        git checkout ${{ github.event.client_payload.brev }}  # Checkout the specific commit from the child repo
-        cd ..  # Move back to parent repo
+      - name: Set Git identity
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"    
 
-    - name: Commit updated submodule reference
-      run: |
-        git add andy.grails.backend  # Stage the submodule update
-        git commit -m "Update submodule reference for andy.grails.backend"
-        
-    - name: Push changes using GitHub Token
-      run: |
-        git push https://github.com/${{ github.repository }}.git HEAD:master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use the default GitHub token for authentication
+      - name: Determine submodule and commit to update
+        id: submodule-info
+        run: |
+          if [ "${{ github.event.action }}" = "update_backend_rev" ]; then
+            echo "name=andy.grails.backend" >> $GITHUB_OUTPUT
+            echo "rev=${{ github.event.client_payload.brev }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.action }}" = "update_frontend_rev" ]; then
+            echo "name=andy.grails.frontend" >> $GITHUB_OUTPUT
+            echo "rev=${{ github.event.client_payload.frev }}" >> $GITHUB_OUTPUT
+          else
+            echo "Unknown event type: ${{ github.event.action }}"
+            exit 1
+          fi
 
-    - name: Print success message
-      run: echo "Submodule andy.grails.backend updated successfully!"
+      - name: Commit updated submodule reference
+        run: |
+          git add andy.grails.backend  # Stage the submodule update
+          git commit -m "Update submodule reference for andy.grails.backend"
+
+      - name: Push changes using GitHub Token
+        run: |
+          git push https://github.com/${{ github.repository }}.git HEAD:master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use the default GitHub token for authentication.
+
+      - name: Print success message
+        run: echo "Submodule andy.grails.backend updated successfully!"
