@@ -1,4 +1,4 @@
-name: Update Backend Rev
+name: Update Submodule Rev
 
 on:
   repository_dispatch:
@@ -7,7 +7,7 @@ on:
       - update_frontend_rev
 
 permissions:
-  contents: write  # Allow "write" access to contents, which includes pushing changes.
+  contents: write
 
 jobs:
   update_submodule:
@@ -16,7 +16,7 @@ jobs:
       - name: Checkout parent repo without submodules
         uses: actions/checkout@v4
         with:
-          submodules: false  # Do NOT initialize submodules yet.
+          submodules: false
 
       - name: Override SSH URLs with HTTPS for submodules
         run: |
@@ -24,14 +24,13 @@ jobs:
             new_url=$(echo $url | sed 's/git@github.com:/https:\/\/github.com\//')
             git config --file .gitmodules $key $new_url
           done
-          cat .gitmodules  # Print updated .gitmodules for debugging
           git submodule sync
-          git submodule update --init --recursive  # Now fetch submodules using HTTPS
+          git submodule update --init --recursive
 
       - name: Set Git identity
         run: |
           git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"    
+          git config user.email "actions@github.com"
 
       - name: Determine submodule and commit to update
         id: submodule-info
@@ -47,16 +46,23 @@ jobs:
             exit 1
           fi
 
+      - name: Update submodule to specific commit
+        run: |
+          cd ${{ steps.submodule-info.outputs.name }}
+          git fetch origin
+          git checkout ${{ steps.submodule-info.outputs.rev }}
+          cd ..
+
       - name: Commit updated submodule reference
         run: |
-          git add andy.grails.backend  # Stage the submodule update
-          git commit -m "Update submodule reference for andy.grails.backend"
+          git add ${{ steps.submodule-info.outputs.name }}
+          git commit -m "Update submodule reference for ${{ steps.submodule-info.outputs.name }}"
 
       - name: Push changes using GitHub Token
         run: |
           git push https://github.com/${{ github.repository }}.git HEAD:master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use the default GitHub token for authentication.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Print success message
-        run: echo "Submodule andy.grails.backend updated successfully!"
+        run: echo "Submodule ${{ steps.submodule-info.outputs.name }} updated successfully!"
