@@ -54,11 +54,19 @@ jobs:
           cd ..
 
       - name: Commit updated submodule reference
+        id: maybe_commit
         run: |
           git add ${{ steps.submodule-info.outputs.name }}
-          git commit -m "Update submodule reference for ${{ steps.submodule-info.outputs.name }}"
+          if git diff --cached --quiet; then
+            echo "No submodule changes to commit."
+            echo "committed=false" >> $GITHUB_OUTPUT
+          else
+            git commit -m "Update submodule reference for ${{ steps.submodule-info.outputs.name }}"
+            echo "committed=true" >> $GITHUB_OUTPUT
+          fi
 
       - name: Push changes using GitHub Token
+        if: steps.maybe_commit.outputs.committed == 'true'
         run: |
           git push https://github.com/${{ github.repository }}.git HEAD:master
         env:
