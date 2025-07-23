@@ -28,7 +28,7 @@ andy.grails/
 To clone this repository including its submodules:
 
 ```bash
-git clone --recurse-submodules https://github.com/YOUR_USERNAME/andy.grails.main.git
+git clone --recurse-submodules git@github.com:aistomin/andy.grails.git
 ```
 
 If you've already cloned the repository without submodules, run:
