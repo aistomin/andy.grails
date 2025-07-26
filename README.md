@@ -1,9 +1,9 @@
 # Andy Grails' Website
 
-This is the main repository for the **Andy Grails** website — a personal project
-to showcase and stream music under the nickname *Andy Grails*. The site is 
-powered by a **Java backend** and an **Angular frontend**, structured as 
-Git submodules.
+This is the main repository for the [Andy Grails' website](https://andy-grails.de/)
+— a personal project to showcase and stream music under the nickname *Andy Grails*. 
+The site is powered by a **Java backend** and an **Angular frontend**, structured
+as Git submodules.
 
 ## Repository Structure
 
