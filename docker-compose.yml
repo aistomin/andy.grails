@@ -1,0 +1,55 @@
+services:
+  # Database
+  db:
+    image: postgres:17.5
+    container_name: andy_grails_db
+    environment:
+      POSTGRES_DB: ${DB_NAME:-andy_grails}
+      POSTGRES_USER: ${DB_USER:-andy}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-andy}
+    ports:
+      - '55432:5432'
+    volumes:
+      - andy_grails_postgres_data:/var/lib/postgresql/data
+    networks:
+      - andy-network
+
+  # Backend API
+  backend:
+    image: andygrails/andy-grails-backend:${BACKEND_REVISION:-latest}
+    platform: linux/amd64
+    container_name: andy_grails_backend
+    depends_on:
+      - db
+    ports:
+      - '8080:8080'
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-andy_grails}
+      DB_USER: ${DB_USER:-andy}
+      DB_PASSWORD: ${DB_PASSWORD:-andy}
+    networks:
+      - andy-network
+
+  # Frontend Angular App
+  frontend:
+    image: andygrails/andy-grails-frontend:${FRONTEND_REVISION:-latest}
+    platform: linux/amd64
+    container_name: andy_grails_frontend
+    ports:
+      - '4200:80'
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=production
+    networks:
+      - andy-network
+
+volumes:
+  andy_grails_postgres_data:
+
+networks:
+  andy-network:
+    driver: bridge
