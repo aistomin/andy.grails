@@ -20,7 +20,8 @@ services:
     platform: linux/amd64
     container_name: andy_grails_backend
     depends_on:
-      - db
+      db:
+        condition: service_started
     ports:
       - '8080:8080'
     environment:
@@ -30,6 +31,12 @@ services:
       DB_NAME: ${DB_NAME:-andy_grails}
       DB_USER: ${DB_USER:-andy}
       DB_PASSWORD: ${DB_PASSWORD:-andy}
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8080/actuator/health']
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
     networks:
       - andy-network
 
@@ -39,9 +46,10 @@ services:
     platform: linux/amd64
     container_name: andy_grails_frontend
     ports:
-      - '4200:80'
+      - '4200:4200'
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     environment:
       - NODE_ENV=production
     networks:
