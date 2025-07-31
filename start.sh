@@ -27,11 +27,49 @@ echo "   Frontend image: andygrails/andy-grails-frontend:$FRONTEND_REVISION"
 # Start the application using docker compose
 docker compose up -d
 
-echo "✅ Application started successfully!"
+echo "⏳ Waiting for backend to be healthy..."
+
+# Function to check backend health
+check_backend_health() {
+    local max_attempts=30
+    local attempt=1
+    
+    while [ $attempt -le $max_attempts ]; do
+        echo "   Attempt $attempt/$max_attempts: Checking backend health..."
+        
+        if curl -s -f http://localhost:8080/actuator/health >/dev/null 2>&1; then
+            # Check if the response contains "status":"UP"
+            if curl -s http://localhost:8080/actuator/health | grep -q '"status":"UP"'; then
+                echo "✅ Backend is healthy!"
+                return 0
+            fi
+        fi
+        
+        echo "   Backend not ready yet, waiting 2 seconds..."
+        sleep 2
+        attempt=$((attempt + 1))
+    done
+    
+    echo "❌ Backend failed to become healthy within 60 seconds"
+    echo "   Check logs with: docker compose logs backend"
+    return 1
+}
+
+# Wait for backend to be healthy
+if check_backend_health; then
+    echo ""
+    echo "✅ Application started successfully!"
 echo ""
 echo "📱 Frontend: http://localhost:4200"
 echo "🔌 Backend API: http://localhost:8080"
 echo "🗄️  Database: localhost:55432"
 echo ""
 echo "📊 To view logs: docker compose logs -f"
-echo "🛑 To stop: ./stop.sh" 
+echo "🛑 To stop: ./stop.sh"
+else
+    echo ""
+    echo "❌ Application startup failed!"
+    echo "   Backend did not become healthy in time."
+    echo "   You can still check the logs: docker compose logs -f"
+    exit 1
+fi 
