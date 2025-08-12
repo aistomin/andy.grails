@@ -3,7 +3,7 @@
 echo "🛑 Stopping Andy Grails Application..."
 
 # Stop all containers using docker compose
-docker compose down
+docker compose down --remove-orphans
 
 echo "✅ Application stopped successfully!"
 echo ""
