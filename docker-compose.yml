@@ -1,7 +1,7 @@
 services:
   # Database
   db:
-    image: postgres:17.5
+    image: postgres:18
     container_name: andy_grails_db
     environment:
       POSTGRES_DB: ${DB_NAME:-andy_grails}
@@ -10,7 +10,7 @@ services:
     ports:
       - '55432:5432'
     volumes:
-      - andy_grails_postgres_data:/var/lib/postgresql/data
+      - andy_grails_postgres:/var/lib/postgresql
     networks:
       - andy-network
 
@@ -56,7 +56,7 @@ services:
       - andy-network
 
 volumes:
-  andy_grails_postgres_data:
+  andy_grails_postgres:
 
 networks:
   andy-network:
