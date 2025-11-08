@@ -160,10 +160,7 @@ E2E tests live in this repository (outside the submodules) under `playwright/` a
 ### Running the Tests
 
 ```bash
-cd playwright
-npm install          # only needed once
-npx playwright install  # downloads the required browsers (first time only)
-npm test             # runs Playwright against http://localhost:4200
+./run-e2e-tests.sh
 ```
 
 To target a different URL, override the `PLAYWRIGHT_BASE_URL` environment variable:
