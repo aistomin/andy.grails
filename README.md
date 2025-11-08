@@ -144,3 +144,27 @@ docker compose down -v
 # Rebuild and start (if you need to rebuild images)
 docker compose up --build -d
 ```
+
+## Playwright End-to-End Tests
+
+E2E tests live in this repository (outside the submodules) under `playwright/` and assume the application is already running in Docker.
+
+### Prerequisites
+
+- Run the application stack and ensure the frontend is reachable at `http://localhost:4200`:
+
+  ```bash
+  ./start.sh
+  ```
+
+### Running the Tests
+
+```bash
+./run-e2e-tests.sh
+```
+
+To target a different URL, override the `PLAYWRIGHT_BASE_URL` environment variable:
+
+```bash
+PLAYWRIGHT_BASE_URL=http://localhost:4300 npm test
+```

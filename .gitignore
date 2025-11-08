@@ -1,1 +1,4 @@
 .idea
+/playwright/node_modules
+/playwright/playwright-report
+/playwright/test-results
