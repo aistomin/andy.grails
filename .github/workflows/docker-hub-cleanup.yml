@@ -1,0 +1,30 @@
+name: Docker Hub Cleanup
+
+on:
+  workflow_dispatch: # Allows manual trigger
+  schedule:
+    # Run daily at 3 AM UTC
+    - cron: '0 3 * * *'
+  repository_dispatch:
+    types:
+      - cleanup_docker_hub
+
+jobs:
+  docker_hub_cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run cleanup script
+        env:
+          DOCKER_HUB_CLEANUP_TOKEN: ${{ secrets.DOCKER_HUB_CLEANUP_TOKEN }}
+        run: python scripts/dockerhub_cleanup.py
