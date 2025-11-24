@@ -12,12 +12,7 @@ auth_resp = requests.post(
     "https://hub.docker.com/v2/users/login/",
     json={"username": USERNAME, "password": TOKEN},
 )
-try:
-    auth_resp.raise_for_status()
-except requests.exceptions.HTTPError as e:
-    print(f"❌ Authentication failed with status {auth_resp.status_code}")
-    print(f"Response: {auth_resp.text}")
-    raise
+auth_resp.raise_for_status()
 jwt_token = auth_resp.json()["token"]
 headers = {"Authorization": f"JWT {jwt_token}"}
 
