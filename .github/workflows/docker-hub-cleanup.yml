@@ -1,7 +1,7 @@
 name: Docker Hub Cleanup
 
 on:
-  workflow_dispatch:  # Allows manual trigger
+  workflow_dispatch: # Allows manual trigger
   schedule:
     # Run daily at 3 AM UTC
     - cron: '0 3 * * *'
@@ -28,4 +28,3 @@ jobs:
         env:
           DOCKER_HUB_CLEANUP_TOKEN: ${{ secrets.DOCKER_HUB_CLEANUP_TOKEN }}
         run: python scripts/dockerhub_cleanup.py
-
