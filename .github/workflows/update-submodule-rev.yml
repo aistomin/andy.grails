@@ -53,8 +53,30 @@ jobs:
           git checkout ${{ steps.submodule-info.outputs.rev }}
           cd ..
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Start application
+        run: |
+          chmod +x start.sh
+          ./start.sh
+
+      - name: Run e2e tests
+        run: |
+          chmod +x run-e2e-tests.sh
+          ./run-e2e-tests.sh
+
+      - name: Stop application
+        if: always()
+        run: |
+          chmod +x stop.sh
+          ./stop.sh
+
       - name: Commit updated submodule reference
         id: maybe_commit
+        if: success()
         run: |
           git add ${{ steps.submodule-info.outputs.name }}
           if git diff --cached --quiet; then
@@ -73,4 +95,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Print success message
-        run: echo "Submodule ${{ steps.submodule-info.outputs.name }} updated successfully!"
+        if: success()
+        run: echo "Submodule ${{ steps.submodule-info.outputs.name }} updated successfully after passing e2e tests!"
