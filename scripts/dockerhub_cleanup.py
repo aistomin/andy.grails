@@ -4,7 +4,14 @@ import os
 USERNAME = "andygrails"
 REPO = "andy-grails-backend"
 KEEP = 10  # number of latest tags to keep
-TOKEN = os.environ["DOCKER_HUB_CLEANUP_TOKEN"]  # personal access token
+TOKEN = os.environ["DOCKER_HUB_ACCESS_TOKEN"]  # personal access token
+
+# Debug output
+print(f"🔍 Token length: {len(TOKEN)}")
+print(f"🔍 Token first 10 chars: {TOKEN[:10]}")
+print(f"🔍 Token last 10 chars: {TOKEN[-10:]}")
+print(f"🔍 Token starts with 'dckr_': {TOKEN.startswith('dckr_')}")
+print(f"🔍 Token repr: {repr(TOKEN)}")
 
 # Step 1: Log in to Docker Hub and get JWT
 print("🔑 Logging in to Docker Hub...")
