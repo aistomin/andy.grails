@@ -2,16 +2,9 @@ import requests
 import os
 
 USERNAME = "andygrails"
-REPO = "andy-grails-backend"
+REPOS = ["andy-grails-backend", "andy-grails-frontend"]
 KEEP = 10  # number of latest tags to keep
 TOKEN = os.environ["DOCKER_HUB_ACCESS_TOKEN"]  # personal access token
-
-# Debug output
-print(f"🔍 Token length: {len(TOKEN)}")
-print(f"🔍 Token first 10 chars: {TOKEN[:10]}")
-print(f"🔍 Token last 10 chars: {TOKEN[-10:]}")
-print(f"🔍 Token starts with 'dckr_': {TOKEN.startswith('dckr_')}")
-print(f"🔍 Token repr: {repr(TOKEN)}")
 
 # Step 1: Log in to Docker Hub and get JWT
 print("🔑 Logging in to Docker Hub...")
@@ -23,32 +16,33 @@ auth_resp.raise_for_status()
 jwt_token = auth_resp.json()["token"]
 headers = {"Authorization": f"JWT {jwt_token}"}
 
-# Step 2: Get tags and clean up
-print(f"🧹 Cleaning up {REPO}...")
-url = f"https://hub.docker.com/v2/repositories/{USERNAME}/{REPO}/tags?page_size=100"
-tags = []
+# Step 2: Clean up each repository
+for REPO in REPOS:
+    print(f"🧹 Cleaning up {REPO}...")
+    url = f"https://hub.docker.com/v2/repositories/{USERNAME}/{REPO}/tags?page_size=100"
+    tags = []
 
-while url:
-    r = requests.get(url, headers=headers)
-    r.raise_for_status()
-    data = r.json()
-    tags.extend(data["results"])
-    url = data.get("next")
+    while url:
+        r = requests.get(url, headers=headers)
+        r.raise_for_status()
+        data = r.json()
+        tags.extend(data["results"])
+        url = data.get("next")
 
-tags.sort(key=lambda t: t["last_updated"], reverse=True)
+    tags.sort(key=lambda t: t["last_updated"], reverse=True)
 
-for tag in tags[KEEP:]:
-    tag_name = tag["name"]
-    if tag_name in ("latest", "stable"):
-        print(f"⏭️  Skipping protected tag: {tag_name}")
-        continue
+    for tag in tags[KEEP:]:
+        tag_name = tag["name"]
+        if tag_name in ("latest", "stable"):
+            print(f"⏭️  Skipping protected tag: {tag_name}")
+            continue
 
-    delete_url = f"https://hub.docker.com/v2/repositories/{USERNAME}/{REPO}/tags/{tag_name}/"
-    print(f"🗑️  Deleting {REPO}:{tag_name} ... ", end="")
-    del_resp = requests.delete(delete_url, headers=headers)
-    if del_resp.status_code in (202, 204):
-        print("✅ Deleted")
-    else:
-        print(f"⚠️  Failed ({del_resp.status_code}) {del_resp.text}")
+        delete_url = f"https://hub.docker.com/v2/repositories/{USERNAME}/{REPO}/tags/{tag_name}/"
+        print(f"🗑️  Deleting {REPO}:{tag_name} ... ", end="")
+        del_resp = requests.delete(delete_url, headers=headers)
+        if del_resp.status_code in (202, 204):
+            print("✅ Deleted")
+        else:
+            print(f"⚠️  Failed ({del_resp.status_code}) {del_resp.text}")
 
 print("✅ Cleanup completed!")
