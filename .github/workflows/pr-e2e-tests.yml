@@ -1,0 +1,46 @@
+name: E2E Tests on Pull Request
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  e2e_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout parent repo with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Override SSH URLs with HTTPS for submodules
+        run: |
+          git config --file .gitmodules --get-regexp url | while read key url; do
+            new_url=$(echo $url | sed 's/git@github.com:/https:\/\/github.com\//')
+            git config --file .gitmodules $key $new_url
+          done
+          git submodule sync
+          git submodule update --init --recursive
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Start application
+        run: |
+          chmod +x start.sh
+          ./start.sh
+
+      - name: Run e2e tests
+        run: |
+          chmod +x run-e2e-tests.sh
+          ./run-e2e-tests.sh
+
+      - name: Stop application
+        if: always()
+        run: |
+          chmod +x stop.sh
+          ./stop.sh
+
