@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test.describe('Video catalogue', () => {
+test.describe('Home page', () => {
   test('shows videos', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -11,5 +11,9 @@ test.describe('Video catalogue', () => {
 
     await expect(videoHeading).toBeVisible();
   });
-});
 
+  test('has correct page title', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'networkidle' });
+    await expect(page).toHaveTitle('Andy Grails');
+  });
+});
