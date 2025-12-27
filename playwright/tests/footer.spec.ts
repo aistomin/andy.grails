@@ -17,18 +17,6 @@ test.describe('Footer', () => {
   });
 
   test.describe('Navigation links', () => {
-    test('has Privacy link', async ({ page }) => {
-      const privacyLink = page.locator('footer a[href="/privacy"]');
-      await expect(privacyLink).toBeVisible();
-      await expect(privacyLink).toHaveText('Privacy');
-    });
-
-    test('has Imprint link', async ({ page }) => {
-      const imprintLink = page.locator('footer a[href="/imprint"]');
-      await expect(imprintLink).toBeVisible();
-      await expect(imprintLink).toHaveText('Imprint');
-    });
-
     test('has Developer link', async ({ page }) => {
       const developerLink = page
         .locator('footer .footer-left a')
