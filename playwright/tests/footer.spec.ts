@@ -13,7 +13,8 @@ test.describe('Footer', () => {
   test('has copyright text', async ({ page }) => {
     const copyright = page.locator('footer .footer-center p');
     await expect(copyright).toBeVisible();
-    await expect(copyright).toContainText('2025 Andy Grails');
+    await expect(copyright).toContainText('© 2025–');
+    await expect(copyright).toContainText('Andy Grails');
   });
 
   test.describe('Navigation links', () => {
