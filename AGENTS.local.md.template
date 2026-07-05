@@ -10,22 +10,10 @@ Copy this file to `AGENTS.local.md` (gitignored) and fill in your own values.
 
 ## GitHub Access
 
-Set the token before starting any session:
+Before starting, configure the GitHub MCP server in Claude Code (one-time setup):
 
 ```bash
-! export GITHUB_TOKEN=<your-token>
-```
-
-Never paste the token directly in chat — use `!` prefix so it stays in the terminal session.
-
-Issue URLs by repo:
-- Parent: `https://github.com/aistomin/andy.grails/issues/<n>`
-- Backend: `https://github.com/aistomin/andy.grails.backend/issues/<n>`
-- Frontend: `https://github.com/aistomin/andy.grails.frontend/issues/<n>`
-
-```bash
-curl -s -H "Authorization: token $GITHUB_TOKEN" \
-  https://api.github.com/repos/aistomin/<repo>/issues/<number>
+claude mcp add github -e GITHUB_PERSONAL_ACCESS_TOKEN=<your-token> -- npx -y @modelcontextprotocol/server-github
 ```
 
 ## Terminology
@@ -47,5 +35,5 @@ Save the report to `.claude/code-review/<date>-full-review.md` in the parent rep
 5. Agent creates a feature branch `Issue-<number>` in the relevant repo(s) (e.g. issue #123 → `Issue-123`)
 6. User explicitly says "go" — only then does the agent touch any code
 7. Agent verifies changes by following the testing instructions in the relevant repo's README (skip if no testing section exists yet)
-8. User reviews; agent writes a conventional commit message
+8. User reviews; agent writes a conventional commit message — no `Co-Authored-By` trailer
 9. Agent never commits or pushes — those belong to the user
