@@ -3,3 +3,4 @@ AGENTS.local.md
 /playwright/node_modules
 /playwright/playwright-report
 /playwright/test-results
+.claude
