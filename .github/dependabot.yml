@@ -9,3 +9,6 @@ updates:
     directory: "/playwright/" # Location of package manifests
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: "build" # Conventional Commits type, e.g. build(deps): bump ...
+      include: "scope" # Adds (deps) / (deps-dev) scope
