@@ -41,7 +41,7 @@ A **Backlog** milestone exists in each repo for unplanned ideas.
 
 | Layer | Technology |
 |-------|-----------|
-| Backend | Java 21, Spring Boot 4.1, Maven, PostgreSQL 18 |
+| Backend | Java 25, Spring Boot 4.1, Maven, PostgreSQL 18 |
 | Backend libs | JPA/Hibernate, Lombok, MapStruct, OpenAPI/Swagger, Testcontainers |
 | Frontend | Angular 22, TypeScript 6, npm |
 | Frontend testing | Jest, Puppeteer |
