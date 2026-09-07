@@ -3,6 +3,7 @@ services:
   db:
     image: postgres:18
     container_name: andy_grails_db
+    restart: unless-stopped
     environment:
       POSTGRES_DB: ${DB_NAME:-andy_grails}
       POSTGRES_USER: ${DB_USER:-andy}
@@ -19,6 +20,7 @@ services:
     image: andygrails/andy-grails-backend:${BACKEND_REVISION:-latest}
     platform: linux/amd64
     container_name: andy_grails_backend
+    restart: unless-stopped
     depends_on:
       db:
         condition: service_started
@@ -45,6 +47,7 @@ services:
     image: andygrails/andy-grails-frontend:${FRONTEND_REVISION:-latest}
     platform: linux/amd64
     container_name: andy_grails_frontend
+    restart: unless-stopped
     ports:
       - '4200:80'
     depends_on:
