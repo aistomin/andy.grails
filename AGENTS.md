@@ -3,6 +3,8 @@
 This file onboards AI agents to the andy.grails project.
 If `AGENTS.local.md` is present in the repo root, read it — it contains personal workflow preferences and local environment details for the current developer.
 
+**This file is the single source of truth for project conventions.** Agents must record any project-level convention, principle, or agreement here (via a normal reviewed change), never in an agent's private memory or other machine-local storage — a fresh clone of this repo must be enough to onboard anyone, human or AI. Machine-specific details go to `AGENTS.local.md`.
+
 ---
 
 ## Why We Build This
@@ -34,6 +36,8 @@ Each repo has its own GitHub issue tracker and milestones. Always check the rele
 
 Current active milestone across all repos: **Version 1.0** (target: Sept 2026 backend / Jan 2027 frontend).
 A **Backlog** milestone exists in each repo for unplanned ideas.
+
+**Cross-repo changes:** the lead issue lives in the repo the technical change comes from and carries the full rationale; each other repo that must adapt gets a short follow-up issue linking back to the lead. Example: removing Spring profiles is led by [backend#299](https://github.com/aistomin/andy.grails.backend/issues/299), while [parent#97](https://github.com/aistomin/andy.grails/issues/97) merely adopts `docker-compose.yml`.
 
 ---
 
@@ -75,6 +79,16 @@ Pull requests to master run tests but do **not** publish Docker images or trigge
 | `./stop.sh` | Stop all containers |
 | `./deploy.sh <revision>` | Deploy to a specific git SHA, branch, or tag |
 | `./run-e2e-tests.sh` | Run Playwright E2E tests (app must already be running) |
+
+---
+
+## Configuration Philosophy
+
+**One project, one file, one configuration point.** This is a tiny, low-load, non-commercial system: redeploys take minutes and downtime is cheap, while config sprawl (parameters nobody understands anymore) is a real, permanent cost.
+
+- **No dev/prod profiles.** Development, Docker, and production run the identical base configuration (`application.yml` in the backend). Environments may differ in *data* (hosts, credentials — via env vars), never in *behavior*. A test-only override (e.g. `application-test.yml` with `ddl-auto: create-drop` for Testcontainers) is acceptable as an inevitable evil when mechanically required.
+- **Every parameter must be "written in blood."** Add a config parameter only after a real problem demanded it — never preemptively, never "because it's best practice". Prefer hardcoded values over env vars and tunables until tuning without redeploy is an actual, experienced need.
+- **Temporary debugging toggles are not configuration.** Use Spring's relaxed binding ad hoc (e.g. `SPRING_JPA_SHOW_SQL=true`) instead of adding entries to config files.
 
 ---
 
