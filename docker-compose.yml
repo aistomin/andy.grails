@@ -27,7 +27,6 @@ services:
     ports:
       - '8080:8080'
     environment:
-      SPRING_PROFILES_ACTIVE: dev
       DB_HOST: db
       DB_PORT: 5432
       DB_NAME: ${DB_NAME:-andy_grails}
