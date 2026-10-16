@@ -9,6 +9,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: update-submodule-rev
+  cancel-in-progress: false
+
 jobs:
   update_submodule:
     runs-on: ubuntu-latest
