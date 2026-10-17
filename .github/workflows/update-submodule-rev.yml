@@ -17,19 +17,10 @@ jobs:
   update_submodule:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout parent repo without submodules
+      - name: Checkout parent repo with submodules
         uses: actions/checkout@v7
         with:
-          submodules: false
-
-      - name: Override SSH URLs with HTTPS for submodules
-        run: |
-          git config --file .gitmodules --get-regexp url | while read key url; do
-            new_url=$(echo $url | sed 's/git@github.com:/https:\/\/github.com\//')
-            git config --file .gitmodules $key $new_url
-          done
-          git submodule sync
-          git submodule update --init --recursive
+          submodules: true
 
       - name: Set Git identity
         run: |
