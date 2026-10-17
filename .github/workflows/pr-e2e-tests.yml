@@ -14,15 +14,6 @@ jobs:
         with:
           submodules: true
 
-      - name: Override SSH URLs with HTTPS for submodules
-        run: |
-          git config --file .gitmodules --get-regexp url | while read key url; do
-            new_url=$(echo $url | sed 's/git@github.com:/https:\/\/github.com\//')
-            git config --file .gitmodules $key $new_url
-          done
-          git submodule sync
-          git submodule update --init --recursive
-
       - name: Set up Node.js
         uses: actions/setup-node@v7
         with:
