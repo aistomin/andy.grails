@@ -12,6 +12,12 @@ services:
       - '55432:5432'
     volumes:
       - andy_grails_postgres:/var/lib/postgresql
+    healthcheck:
+      # -h localhost forces TCP: the temporary server the image runs during
+      # initdb listens on the Unix socket only, so it must not count as ready.
+      test: ['CMD', 'pg_isready', '-U', '${DB_USER:-andy}', '-d', '${DB_NAME:-andy_grails}', '-h', 'localhost']
+      interval: 5s
+      retries: 10
     networks:
       - andy-network
 
@@ -23,7 +29,7 @@ services:
     restart: unless-stopped
     depends_on:
       db:
-        condition: service_started
+        condition: service_healthy
     ports:
       - '8080:8080'
     environment:
