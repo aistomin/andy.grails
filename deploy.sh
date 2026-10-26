@@ -13,7 +13,7 @@ usage() {
     echo "  git-revision    Git revision (commit hash, branch name, or tag)"
     echo ""
     echo "Examples:"
-    echo "  $0 main"
+    echo "  $0 master"
     echo "  $0 abc1234"
     echo "  $0 v1.0.0"
     echo ""

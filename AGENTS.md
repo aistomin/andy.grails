@@ -34,7 +34,7 @@ The backend and frontend are Git submodules of the parent repo. Submodules do **
 
 Each repo has its own GitHub issue tracker and milestones. Always check the relevant repo when working on a feature.
 
-Current active milestone across all repos: **Version 1.0** (target: Sept 2026 backend / Jan 2027 frontend).
+Current active milestone across all repos: **Version 1.0** (due 2027-01-01 in all three repos).
 A **Backlog** milestone exists in each repo for unplanned ideas.
 
 **Cross-repo changes:** the lead issue lives in the repo the technical change comes from and carries the full rationale; each other repo that must adapt gets a short follow-up issue linking back to the lead. Example: removing Spring profiles is led by [backend#299](https://github.com/aistomin/andy.grails.backend/issues/299), while [parent#97](https://github.com/aistomin/andy.grails/issues/97) merely adopts `docker-compose.yml`.
@@ -49,7 +49,7 @@ A **Backlog** milestone exists in each repo for unplanned ideas.
 | Backend libs | JPA/Hibernate, Lombok, MapStruct, OpenAPI/Swagger, Testcontainers |
 | Frontend | Angular 22, TypeScript 6, npm |
 | Frontend testing | Jest, Puppeteer |
-| E2E testing | Playwright 1.59 (lives in `playwright/` in parent repo) |
+| E2E testing | Playwright (lives in `playwright/` in parent repo) |
 | Infrastructure | Docker, Docker Compose, nginx, Docker Hub (`andygrails/` org) |
 
 ---
