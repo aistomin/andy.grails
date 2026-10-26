@@ -92,7 +92,7 @@ Deploys the application to a specific Git revision, allowing easy rollbacks and 
 ./deploy.sh abc1234
 
 # Deploy to a branch
-./deploy.sh main
+./deploy.sh master
 
 # Deploy to a tag
 ./deploy.sh v1.0.0
@@ -140,9 +140,6 @@ docker compose logs -f db
 
 # Remove all containers and volumes
 docker compose down -v
-
-# Rebuild and start (if you need to rebuild images)
-docker compose up --build -d
 ```
 
 ## Playwright End-to-End Tests
@@ -166,5 +163,5 @@ E2E tests live in this repository (outside the submodules) under `playwright/` a
 To target a different URL, override the `PLAYWRIGHT_BASE_URL` environment variable:
 
 ```bash
-PLAYWRIGHT_BASE_URL=http://localhost:4300 npm test
+PLAYWRIGHT_BASE_URL=http://localhost:4300 ./run-e2e-tests.sh
 ```
