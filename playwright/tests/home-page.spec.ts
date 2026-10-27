@@ -14,6 +14,6 @@ test.describe('Home page', () => {
 
   test('has correct page title', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' });
-    await expect(page).toHaveTitle('Andy Grails');
+    await expect(page).toHaveTitle('Andy Grails (broken on purpose for #101)');
   });
 });
