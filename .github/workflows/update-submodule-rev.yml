@@ -63,6 +63,20 @@ jobs:
           chmod +x run-e2e-tests.sh
           ./run-e2e-tests.sh
 
+      - name: Dump container logs
+        if: failure()
+        run: docker compose logs --no-color
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: |
+            playwright/playwright-report
+            playwright/test-results
+          if-no-files-found: ignore
+
       - name: Stop application
         if: always()
         run: |
