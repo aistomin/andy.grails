@@ -4,3 +4,4 @@ AGENTS.local.md
 /playwright/playwright-report
 /playwright/test-results
 .claude
+__pycache__/

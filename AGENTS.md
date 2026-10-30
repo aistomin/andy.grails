@@ -99,5 +99,5 @@ Pull requests to master run tests but do **not** publish Docker images or trigge
 - **Database defaults** — `DB_NAME=andy_grails`, `DB_USER=andy`, `DB_PASSWORD=andy`. Override via env vars.
 - **E2E base URL** — defaults to `http://localhost:4200`. Override with `PLAYWRIGHT_BASE_URL`.
 - **Coverage** — backend coverage reports go to Codecov automatically on master pushes.
-- **Docker Hub cleanup** — runs daily at 3 AM UTC, retains the latest 10 tags per repository (`scripts/dockerhub_cleanup.py`).
+- **Docker Hub cleanup** — runs daily at 3 AM UTC, retains the latest 10 tags per repository plus every submodule revision referenced by the last 30 parent master commits, so the deployed images and recent rollback targets stay pullable (`scripts/dockerhub_cleanup.py`).
 - **Access URLs** — frontend: `http://localhost:4200`, backend API: `http://localhost:8080`, database: `localhost:55432`.
