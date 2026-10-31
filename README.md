@@ -165,3 +165,28 @@ To target a different URL, override the `PLAYWRIGHT_BASE_URL` environment variab
 ```bash
 PLAYWRIGHT_BASE_URL=http://localhost:4300 ./run-e2e-tests.sh
 ```
+
+## How to Contribute
+
+Do you want to help us with the project? We would be more than happy to have your contribution!
+
+Please: fork the repository, make changes, and submit a pull request. We promise
+to review your changes within the next couple of days and merge them to the master
+branch if they look correct. To avoid frustration, before sending us your pull
+request, please start the application and run the end-to-end tests:
+
+```bash
+./start.sh
+./run-e2e-tests.sh
+```
+
+If you touched the scripts in `scripts/`, run their unit tests as well (they
+need the `requests` package):
+
+```bash
+pip install requests
+python3 -m unittest discover --start-directory scripts
+```
+
+Changes to the backend or the frontend belong in their own repositories; each
+has its own "How to Contribute" section.
