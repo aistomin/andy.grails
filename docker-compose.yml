@@ -1,9 +1,22 @@
+# Shared log rotation: every container keeps at most 3 x 10 MB of logs so a
+# chatty service cannot fill the disk of a small server.
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
+
 services:
   # Database
   db:
     image: postgres:18
     container_name: andy_grails_db
     restart: unless-stopped
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          memory: 512m
     environment:
       POSTGRES_DB: ${DB_NAME:-andy_grails}
       POSTGRES_USER: ${DB_USER:-andy}
@@ -27,6 +40,11 @@ services:
     platform: linux/amd64
     container_name: andy_grails_backend
     restart: unless-stopped
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          memory: 1g
     depends_on:
       db:
         condition: service_healthy
@@ -38,6 +56,9 @@ services:
       DB_NAME: ${DB_NAME:-andy_grails}
       DB_USER: ${DB_USER:-andy}
       DB_PASSWORD: ${DB_PASSWORD:-andy}
+      # Let the JVM heap follow the container limit above (the JDK default is
+      # 25%, which leaves Spring Boot with only 256 MB heap out of 1 GB).
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=60
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:8080/actuator/health']
       interval: 10s
@@ -53,6 +74,11 @@ services:
     platform: linux/amd64
     container_name: andy_grails_frontend
     restart: unless-stopped
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          memory: 64m
     ports:
       - '4200:80'
     depends_on:
