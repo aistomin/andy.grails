@@ -69,7 +69,7 @@ Push to submodule master
   → If E2E pass: commits updated submodule ref to parent master
 ```
 
-Pull requests to master run tests but do **not** publish Docker images or trigger parent updates.
+Pull requests to master run tests (in the parent repo: the Playwright E2E tests) but do **not** publish Docker images or trigger parent updates.
 
 ### Key Scripts (parent repo root)
 
@@ -86,7 +86,7 @@ Pull requests to master run tests but do **not** publish Docker images or trigge
 
 **One project, one file, one configuration point.** This is a tiny, low-load, non-commercial system: redeploys take minutes and downtime is cheap, while config sprawl (parameters nobody understands anymore) is a real, permanent cost.
 
-- **No dev/prod profiles.** Development, Docker, and production run the identical base configuration (`application.yml` in the backend). Environments may differ in *data* (hosts, credentials — via env vars), never in *behavior*. A test-only override (e.g. `application-test.yml` with `ddl-auto: create-drop` for Testcontainers) is acceptable as an inevitable evil when mechanically required.
+- **No dev/prod profiles.** Development, Docker, and production run the identical base configuration (`application.yml` in the backend). Environments may differ in *data* (hosts, credentials — via env vars), never in *behavior*.
 - **Every parameter must be "written in blood."** Add a config parameter only after a real problem demanded it — never preemptively, never "because it's best practice". Prefer hardcoded values over env vars and tunables until tuning without redeploy is an actual, experienced need.
 - **Temporary debugging toggles are not configuration.** Use Spring's relaxed binding ad hoc (e.g. `SPRING_JPA_SHOW_SQL=true`) instead of adding entries to config files.
 
@@ -96,9 +96,9 @@ Pull requests to master run tests but do **not** publish Docker images or trigge
 
 - **Submodules not needed for Docker runs** — `start.sh` resolves the current git revision and pulls the matching Docker Hub image tag directly.
 - **Revision-based image tags** — images are tagged with the short git SHA (e.g. `andygrails/andy-grails-backend:abc1234`). The `latest` tag is also pushed on every master build.
-- **Database defaults** — `DB_NAME=andy_grails`, `DB_USER=andy`, `DB_PASSWORD=andy`. Override via env vars.
+- **Database defaults (Docker Compose)** — `DB_NAME=andy_grails`, `DB_USER=andy`, `DB_PASSWORD=andy`. Override via env vars.
 - **E2E base URL** — defaults to `http://localhost:4200`. Override with `PLAYWRIGHT_BASE_URL`.
-- **Coverage** — backend coverage reports go to Codecov automatically on master pushes.
+- **Coverage** — backend coverage reports go to Codecov on every CI run, pull requests included.
 - **Docker Hub cleanup** — runs daily at 3 AM UTC, retains the latest 10 tags per repository plus every submodule revision referenced by the last 30 parent master commits, so the deployed images and recent rollback targets stay pullable (`scripts/dockerhub_cleanup.py`).
 - **Access URLs** — frontend: `http://localhost:4200`, backend API: `http://localhost:8080`, database: `localhost:55432`.
 
