@@ -1,6 +1,6 @@
 # AGENTS.local.md — Personal Setup Template
 
-Copy this file to `AGENTS.local.md` (gitignored) and fill in your own values.
+Copy this file to `AGENTS.local.md` (gitignored) and adjust the paths. Project conventions live in `AGENTS.md`; this file holds only what is specific to one developer and one machine. Keep it in sync with the owner's `AGENTS.local.md`, so that a lost machine loses nothing.
 
 ## Local Directories
 
@@ -8,32 +8,24 @@ Copy this file to `AGENTS.local.md` (gitignored) and fill in your own values.
 - `/path/to/andy.grails.backend` — backend submodule, checked out independently
 - `/path/to/andy.grails.frontend` — frontend submodule, checked out independently
 
+## Tool Versions
+
+The default shell has older tools on its `PATH`, so the verification commands from the READMEs need a prefix:
+
+- **Backend** — force Java 25 via **both** `JAVA_HOME` and `PATH` (the SpotBugs plugin forks a JVM from `PATH`'s `java`, so `JAVA_HOME` alone fails with `UnsupportedClassVersionError`):
+  `JAVA_HOME=$HOME/.sdkman/candidates/java/25.0.4-tem PATH="$HOME/.sdkman/candidates/java/25.0.4-tem/bin:$PATH" ./mvnw clean install package javadoc:javadoc`
+- **Frontend** — use Node 22.22.3 (the default shell's Node is too old for the Angular CLI):
+  `PATH="$HOME/.volta/tools/image/node/22.22.3/bin:$PATH" npm test`
+- **Parent `scripts/` tests** — `requests` is not installed in the default Python; run `python3 -m unittest discover --start-directory scripts` from a throwaway virtual environment instead of installing into the system Python.
+
 ## GitHub Access
 
-Before starting, configure the GitHub MCP server in Claude Code (one-time setup):
+- The `gh` CLI is authenticated in the system keyring; use it for reads and for writes the owner has asked for.
+- Never paste a token into the chat. If a token is needed, the owner sets it in the session's shell (`export GITHUB_TOKEN=<token>`).
 
-```bash
-claude mcp add github -e GITHUB_PERSONAL_ACCESS_TOKEN=<your-token> -- npx -y @modelcontextprotocol/server-github
-```
+## Communication
 
-## Terminology
-
-**review** — Full codebase walkthrough of the relevant repo(s). Identify issues (bugs, code smells, missing things, improvements), cross-reference with open GitHub issues, and produce a report structured as:
-1. Issues already tracked in GitHub (with issue numbers)
-2. Issues found in code that are NOT yet reported — candidate new tickets
-
-Save the report to `.claude/code-review/<date>-full-review.md` in the parent repo.
-
-**review the changes** — Review only what was modified. Run `git diff` (or `git diff master..HEAD` on a feature branch) in the relevant repo(s), inspect the changed code, and produce the same structured report limited to the scope of those changes. Do NOT walk through unrelated code.
-
-## Workflow
-
-1. User provides a GitHub issue number
-2. Agent pulls latest master in the parent repo and updates submodules
-3. Agent reads the issue from GitHub and grills the user to understand requirements (use `grill-me` skill)
-4. Agent and user iterate on a plan — the plan determines which repo(s) are touched
-5. Agent creates a feature branch `Issue-<number>` in the relevant repo(s) (e.g. issue #123 → `Issue-123`)
-6. User explicitly says "go" — only then does the agent touch any code
-7. Agent verifies changes by following the testing instructions in the relevant repo's README (skip if no testing section exists yet)
-8. User reviews; agent writes a conventional commit message — no `Co-Authored-By` trailer
-9. Agent never commits or pushes — those belong to the user
+- Keep every message to 3–5 short paragraphs. Long reports do not get read.
+- Present findings one at a time: state one, decide it together, then move to the next. Never dump a full list.
+- Ask exactly one question per message and wait for the answer. Never join two questions in one sentence.
+- The owner reads the end of a message first. A proposed commit message there means "tested and ready"; if something is still open, end with that one request instead.
