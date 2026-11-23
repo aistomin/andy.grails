@@ -20,6 +20,7 @@ jobs:
       - name: Checkout parent repo with submodules
         uses: actions/checkout@v7
         with:
+          ref: master
           submodules: true
 
       - name: Set Git identity
