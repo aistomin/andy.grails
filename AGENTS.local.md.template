@@ -13,7 +13,7 @@ Copy this file to `AGENTS.local.md` (gitignored) and adjust the paths. Project c
 The default shell has older tools on its `PATH`, so the verification commands from the READMEs need a prefix:
 
 - **Backend** — force Java 25 via **both** `JAVA_HOME` and `PATH` (the SpotBugs plugin forks a JVM from `PATH`'s `java`, so `JAVA_HOME` alone fails with `UnsupportedClassVersionError`):
-  `JAVA_HOME=$HOME/.sdkman/candidates/java/25.0.4-tem PATH="$HOME/.sdkman/candidates/java/25.0.4-tem/bin:$PATH" ./mvnw clean install package javadoc:javadoc`
+  `JAVA_HOME=$HOME/.sdkman/candidates/java/25.0.4-tem PATH="$HOME/.sdkman/candidates/java/25.0.4-tem/bin:$PATH" ./mvnw clean install javadoc:javadoc`
 - **Frontend** — use Node 22.22.3 (the default shell's Node is too old for the Angular CLI):
   `PATH="$HOME/.volta/tools/image/node/22.22.3/bin:$PATH" npm test`
 - **Parent `scripts/` tests** — `requests` is not installed in the default Python; run `python3 -m unittest discover --start-directory scripts` from a throwaway virtual environment instead of installing into the system Python.
